@@ -5,15 +5,7 @@ import { getVideos } from './services/videos';
 import { Video } from './services/video.interface';
 
 const App: React.FC = () => {
-  const [videos, setVideos] = useState<Video[]>([]);
 
-  const handleVideosResponse = (videos: Video[]) => {
-    setVideos(videos);
-  };
-
-  useEffect(() => {
-    getVideos().then(handleVideosResponse);
-  }, []);
   return (
     <>
       <AppBar position="static">
@@ -22,7 +14,7 @@ const App: React.FC = () => {
         </Toolbar>
       </AppBar>
       <Container>
-        <VideosTable videos={videos} />
+        <VideosTable />
       </Container>
     </>
   );

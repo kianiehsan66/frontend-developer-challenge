@@ -38,3 +38,5 @@ const getAuthorMovies = (author: Author, categories: Category[]): Video[] => {
 const getCategoryNamesFromIds = (catIds: number[], categories: Category[]): string[] => {
   return categories.filter(x => catIds.includes(x.id)).map(y => y.name);
 }
+
+
