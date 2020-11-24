@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { } from 'react';
 import { AppBar, Container, Toolbar, Typography } from '@material-ui/core';
 import { VideosTable } from './components/videos-table';
-import { getVideos } from './services/videos';
-import { Video } from './services/video.interface';
+
 
 const App: React.FC = () => {
 

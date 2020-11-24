@@ -23,28 +23,20 @@
       "name": "David Munch",
       "videos": [
         {
-          "id": 7,
+          "id": 1,
           "catIds": [
             1,
+            2
+          ],
+          "name": "Set the Moon"
+        },
+        {
+          "id": 2,
+          "catIds": [
             2,
-            3,
             4
           ],
-          "name": "oop1"
-        },
-        {
-          "id": 10,
-          "catIds": [
-            1
-          ],
-          "name": "test1"
-        },
-        {
-          "id": 11,
-          "catIds": [
-            1
-          ],
-          "name": "okok1"
+          "name": "Lights"
         }
       ]
     },
@@ -74,29 +66,6 @@
             2
           ],
           "name": "Go and get it"
-        },
-        {
-          "id": 2,
-          "catIds": [
-            2,
-            4
-          ],
-          "name": "Lights"
-        },
-        {
-          "id": 1,
-          "catIds": [
-            1,
-            2
-          ],
-          "name": "Set the Moon"
-        },
-        {
-          "id": 9,
-          "name": "ok",
-          "catIds": [
-            2
-          ]
         }
       ]
     },
@@ -111,13 +80,6 @@
             4
           ],
           "name": "Torrance"
-        },
-        {
-          "id": 8,
-          "catIds": [
-            2
-          ],
-          "name": "asd1"
         }
       ]
     }
