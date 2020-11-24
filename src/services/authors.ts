@@ -5,7 +5,6 @@ export const getAuthors = (): Promise<Author[]> => {
 };
 
 export const putAuthor = (author: Author) => {
-  console.log(author);
 
   return fetch(`${process.env.REACT_APP_API}/authors/${author.id}`,
     {
@@ -17,14 +16,3 @@ export const putAuthor = (author: Author) => {
     }).then((response) => (response.json() as unknown as Author));
 }
 
-export const getHighestVideoId = (authors: Author[]) => {
-  var highestId = 0;
-  authors.forEach(author => {
-    author.videos.forEach(video => {
-      if (video.id > highestId) {
-        highestId = video.id;
-      }
-    });
-  });
-  return highestId;
-}

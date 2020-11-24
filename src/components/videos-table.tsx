@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { IconButton, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
-import { VideosTableProps } from './videos-table.interface';
 import { AddEditVideoDialogProps } from './add-edit-video-dialog.interface';
 import AddEditVideoDialog from './add-edit-video-dialog';
 import { Video } from '../services/video.interface';
@@ -18,7 +17,6 @@ export const VideosTable: React.FC = () => {
   const [dialogState, setOpen] = useState<AddEditVideoDialogProps>({ onClose: handleCloseClick, video: undefined, isOpen: false });
 
   const handleVideosResponse = (videos: Video[]) => {
-    console.log("STAR");
     setVideos(videos);
   };
 
@@ -28,11 +26,7 @@ export const VideosTable: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
 
 
-
-
-
   const openAddVideoDialog = () => {
-
     setOpen({ ...dialogState, video: undefined, isOpen: true });
   };
 

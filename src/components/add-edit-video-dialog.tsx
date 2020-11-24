@@ -25,7 +25,7 @@ import { AddEditVideoDialogProps } from './add-edit-video-dialog.interface';
 import { Category } from './../services/category.interface';
 
 import { Author } from '../services/author.interface';
-import { getAuthors, getHighestVideoId, putAuthor } from '../services/authors';
+import { getAuthors, putAuthor } from '../services/authors';
 import { getCategories } from '../services/categories';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -36,19 +36,8 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 300,
     },
     nested: {
-
       paddingLeft: theme.spacing(0),
-    },
-    chips: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    chip: {
-      margin: 2,
-    },
-    noLabel: {
-      marginTop: theme.spacing(3),
-    },
+    }
   }),
 );
 
@@ -71,16 +60,18 @@ const AddEditVideoDialog: React.FC<AddEditVideoDialogProps> = (dialogProps) => {
   }, []);
 
   useEffect(() => {
-    setIsDialogOpen(dialogProps.isOpen);
-    if (dialogProps.video) {
 
+    setIsDialogOpen(dialogProps.isOpen);
+
+    if (dialogProps.video) {
       setDialogTitle(`Edit "${dialogProps.video.name}"`);
       setVideoTitle(dialogProps.video.name);
+      //setting author "select" value based on injected video
       const authorId = authorsList.find((author) => (author.name === dialogProps.video?.author))?.id;
       if (authorId) {
-        console.log(authorId);
         setSelectedAuthorId(authorId.toString());
       }
+      //setting categories "list" value based on injected video
       const categoryIds = categoriesList.filter((category) => (dialogProps.video?.categories.includes(category.name))).map(category => category.id);
       setSelectedCategories(categoryIds);
     }
@@ -92,6 +83,18 @@ const AddEditVideoDialog: React.FC<AddEditVideoDialogProps> = (dialogProps) => {
 
   }, [dialogProps, authorsList, categoriesList]);
 
+
+  const highestVideoId = () => {
+    var highestId = 0;
+    authorsList.forEach(author => {
+      author.videos.forEach(video => {
+        if (video.id > highestId) {
+          highestId = video.id;
+        }
+      });
+    });
+    return highestId;
+  }
   const updateVideo = () => {
     let selectedAuthor = authorsList.find(a => a.id === Number.parseInt(selectedAuthorId));
     if (!selectedAuthor)
@@ -112,7 +115,6 @@ const AddEditVideoDialog: React.FC<AddEditVideoDialogProps> = (dialogProps) => {
     {
       let previousAuthor = authorsList.find(a => a.name === dialogProps.video?.author);
       if (!previousAuthor) return;
-      console.log(previousAuthor);
 
       const previousAuthorVideos = previousAuthor?.videos.filter(aa => aa.id !== dialogProps.video?.id);
       if (!previousAuthorVideos) return;
@@ -129,29 +131,26 @@ const AddEditVideoDialog: React.FC<AddEditVideoDialogProps> = (dialogProps) => {
     }
   }
   const addVideo = () => {
-    let selectedAuthor = authorsList.find(a => a.id === Number.parseInt(selectedAuthorId));
-    selectedAuthor?.videos.push({ id: getHighestVideoId(authorsList) + 1, name: videoTitle, catIds: selectedCategories });
+    let selectedAuthor = authorsList.find(author => author.id === Number.parseInt(selectedAuthorId));
+    selectedAuthor?.videos.push({ id: highestVideoId() + 1, name: videoTitle, catIds: selectedCategories });
     if (selectedAuthor)
       putAuthor(selectedAuthor).then(responseAuthor => {
         selectedAuthor = responseAuthor;
         dialogProps.onClose();
       });
   }
-  const handleClose = (isCancel: Boolean) => {
+  const handleSave = () => {
     setIsDialogOpen(false);
-    if (isCancel)
-      return;
     if (dialogProps.video && dialogProps.video?.id > 0) {
       updateVideo();
     }
     else {
       addVideo();
     }
-
-
   };
-
-
+  const handleCancel = () => {
+    setIsDialogOpen(false);
+  };
   const handleToggle = (value: number) => () => {
     const currentIndex = selectedCategories.indexOf(value);
     const newChecked = [...selectedCategories];
@@ -164,7 +163,6 @@ const AddEditVideoDialog: React.FC<AddEditVideoDialogProps> = (dialogProps) => {
 
     setSelectedCategories(newChecked);
   };
-
   const handleSelectAuthor = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedId = event.target.value as string;
     setSelectedAuthorId(selectedId);
@@ -188,51 +186,55 @@ const AddEditVideoDialog: React.FC<AddEditVideoDialogProps> = (dialogProps) => {
   };
 
   return (
-    <Dialog open={isDialogOpen} onClose={dialogProps.onClose} fullWidth={true} aria-labelledby="form-dialog-title">
+    <Dialog open={isDialogOpen} fullWidth={true} aria-labelledby="form-dialog-title">
+
       <DialogTitle id="form-dialog-title">{dialogTitle}</DialogTitle>
       <DialogContent>
-        <FormControl className={classes.formControl}> <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="Video name"
-          type="text"
-          fullWidth
-          value={videoTitle}
-          onChange={(e) => setVideoTitle(e.target.value)}
-        /></FormControl>
+        <FormControl className={classes.formControl} >
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Video name"
+            type="text"
+            fullWidth
+            value={videoTitle}
+            onChange={(e) => setVideoTitle(e.target.value)}
+          />
+        </FormControl>
         <br />
         <FormControl className={classes.formControl}>
           <InputLabel id="demo-simple-select-label">Author</InputLabel>
-          <Select labelId="demo-simple-select-label" id="demo-simple-select" onChange={handleSelectAuthor} value={selectedAuthorId}>
+          <Select labelId="demo-simple-select-label"
+            id="demo-simple-select" onChange={handleSelectAuthor} value={selectedAuthorId}>
             {authorsList?.map((author) => (
               <MenuItem key={author.id} value={author.id}>
                 {author.name}
               </MenuItem>
             ))}
           </Select>
-
         </FormControl>
         <br />
-        <FormControl className={classes.formControl}>
-
+        <FormControl required className={classes.formControl}>
           <List subheader={
             <ListSubheader className={classes.nested} component="div" id="nested-list-subheader">
               Categories
         </ListSubheader>
           }>{categoriesList?.map((category) => createListItem(category))}</List>
-
         </FormControl>
-
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleClose(true)} color="primary">
+        <Button onClick={handleCancel} color="primary">
           Cancel
         </Button>
-        <Button onClick={() => handleClose(false)} color="primary">
+        <Button
+          type="submit"
+          onClick={handleSave}
+          color="primary">
           Save
         </Button>
       </DialogActions>
+
     </Dialog>
   );
 };
